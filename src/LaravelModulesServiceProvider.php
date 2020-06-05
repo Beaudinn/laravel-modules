@@ -2,9 +2,12 @@
 
 namespace Nwidart\Modules;
 
+use Hyn\Tenancy\Contracts\CurrentHostname;
+use Illuminate\Support\Facades\Schema;
 use Nwidart\Modules\Contracts\RepositoryInterface;
 use Nwidart\Modules\Exceptions\InvalidActivatorClass;
 use Nwidart\Modules\Support\Stub;
+use Hyn\Tenancy\Environment;
 
 class LaravelModulesServiceProvider extends ModulesServiceProvider
 {
@@ -13,8 +16,13 @@ class LaravelModulesServiceProvider extends ModulesServiceProvider
      */
     public function boot()
     {
-        $this->registerNamespaces();
+
+
+
+
         $this->registerModules();
+
+
     }
 
     /**
@@ -53,9 +61,17 @@ class LaravelModulesServiceProvider extends ModulesServiceProvider
 
             return new Laravel\LaravelFileRepository($app, $path);
         });
+
+        if($this->app->runningInConsole()){
+            $this->app['config']->set('modules.activator', 'file');
+        }
         $this->app->singleton(Contracts\ActivatorInterface::class, function ($app) {
             $activator = $app['config']->get('modules.activator');
-            $class = $app['config']->get('modules.activators.' . $activator)['class'];
+
+
+              $class = $app['config']->get('modules.activators.' . $activator)['class'];
+
+
 
             if ($class === null) {
                 throw InvalidActivatorClass::missingConfig();

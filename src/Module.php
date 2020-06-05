@@ -187,10 +187,7 @@ abstract class Module
             $this->registerTranslation();
         }
 
-        if ($this->isLoadFilesOnBoot()) {
-            $this->registerFiles();
-        }
-
+       $this->registerFiles();
         $this->fireEvent('boot');
     }
 
@@ -222,6 +219,8 @@ abstract class Module
         if ($file === null) {
             $file = 'module.json';
         }
+
+
 
         return Arr::get($this->moduleJson, $file, function () use ($file) {
             return $this->moduleJson[$file] = new Json($this->getPath() . '/' . $file, $this->files);
@@ -262,10 +261,10 @@ abstract class Module
         $this->registerAliases();
 
         $this->registerProviders();
-
-        if ($this->isLoadFilesOnBoot() === false) {
-            $this->registerFiles();
-        }
+              $this->registerFiles();
+        // if ($this->isLoadFilesOnBoot() === false) {
+        //     $this->registerFiles();
+        // }
 
         $this->fireEvent('register');
     }
